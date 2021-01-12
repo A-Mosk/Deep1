@@ -71,7 +71,7 @@ while L[len(L)-1] >= 0.01 or L[len(L)-1] < L[len(L)-2] * 0.999:
         break
     
     #forward
-    for layer in Net
+    for layer in Net:
         try:
             Z[layer[0]] = np.dot(W[layer[0]],A[layer[0]-1]) + B[layer[0]]
         except:
@@ -101,39 +101,32 @@ while L[len(L)-1] >= 0.01 or L[len(L)-1] < L[len(L)-2] * 0.999:
     L.append(-(1/m)*np.sum(Y*np.log(A[len(A)])+(1-Y)*np.log(1-A[len(A)])))
     
     dA = -(Y/A[len[A]]) + (1-Y)/(1-A[len(A)])
-    dZ = 
+    
+    dZ = [dA * dsigma(A[len(A)])]
+    dW = (1/m)*np.dot(dZ,A[len(A)-1].T)
+    W[len(A)] = W[len(A)] - alpha * dW
+    dB = (1/m)*np.sum(dZ,axis = 1,keepdims = True)
+    B[len(A)] = B[len(A)] - alpha * dB
     
     #backward
-    for layer in Net
-        if layer[1] == 'relu':
-            try:
-                dZ = dA
-    dZ_4 = dA * dsigma(A_4)
-    dW_4 = (1/m)*np.dot(dZ_4,A_3.T)
-    dB_4 = (1/m)*np.sum(dZ_4,axis = 1,keepdims = True)
-    
-    dZ_3 = np.dot(W_4.T,dZ_4) * drelu(A_3)
-    dW_3 = (1/m)*np.dot(dZ_3,A_2.T)
-    dB_3 = (1/m)*np.sum(dZ_3,axis = 1,keepdims = True)
-    
-    dZ_2 = np.dot(W_3.T,dZ_3) * drelu(A_2)
-    dW_2 = (1/m)*np.dot(dZ_2,A_1.T)
-    dB_2 = (1/m)*np.sum(dZ_2,axis = 1,keepdims = True)
-    
-    dZ_1 = np.dot(W_2.T,dZ_2) * drelu(A_1)
-    dW_1 = (1/m)*np.dot(dZ_1,A_0.T)
-    dB_1 = (1/m)*np.sum(dZ_1,axis = 1,keepdims = True)
-    
-    W_1 = W_1 - alpha * dW_1
-    B_1 = B_1 - alpha * dB_1
-    W_2 = W_2 - alpha * dW_2
-    B_2 = B_2 - alpha * dB_2
-    W_3 = W_3 - alpha * dW_3
-    B_3 = B_3 - alpha * dB_3
-    W_4 = W_4 - alpha * dW_4
-    B_4 = B_4 - alpha * dB_4
-    
+    k = len(Net) - 1
+    j = 0
+    while k > 0:
+        if Net[k][1] == 'relu':
+            dZ.append(np.dot(W[k].T,dZ[j]) * drelu(A[k-1]))
+        elif Net[k][1] == 'sigma':
+            dZ.append(np.dot(W[k].T,dZ[j]) * dsigma(A[k-1]))
+        elif Net[k][1] == 'tanh':
+            dZ.append(np.dot(W[k].T,dZ[j]) * dtanh(A[k-1]))
+            
+        dW = (1/m)*np.dot(dZ,A[k-1].T)
+        W[k] = W[k] - alpha * dW
+        dB = (1/m)*np.sum(dZ,axis = 1,keepdims = True)
+        B[k] = B[k] - alpha * dB
+        j = j + 1
+        k = k - 1
     i = i + 1
+
 plt.plot(L)
 print('Y',Y.shape,Y)
 print('A_4',A_4.shape,A_4)
