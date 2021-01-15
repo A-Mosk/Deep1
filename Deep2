@@ -127,7 +127,7 @@ while L[len(L)-1] >= 0.01 or L[len(L)-1] < L[len(L)-2] * 0.999:
 
 plt.plot(L)
 print('Y',Y.shape,Y)
-print('A',A[len(Net)].shape,A[len(Net)])
+print('A',A[len(A)-1].shape,A[len(A)-1])
 print('i',i)
 plt.xlabel('Rounds') 
 plt.ylabel('Cost function') 
