@@ -16,4 +16,9 @@ for layer in Net:
             A_test[layer[0]+1] = sigma(Z[layer[0]])
         except:
             A_test.append(sigma(Z[layer[0]]))
+    elif layer [1] == 'lin':
+        try:
+            A_test[layer[0]+1] = lin(Z[layer[0]])
+        except:
+            A_test.append(lin(Z[layer[0]]))
 print(A_test[len(A)-1],Y_test)
