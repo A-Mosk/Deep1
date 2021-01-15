@@ -1,10 +1,19 @@
 #test
 for layer in Net:
-    Z[layer[0]] = np.dot(W[layer[0]],A[layer[0]]) + B[layer[0]]
+    Z[layer[0]] = np.dot(W[layer[0]],A_test[layer[0]]) + B[layer[0]]
     if layer[1] == 'relu':
-        A[layer[0]+1] = relu(Z[layer[0]])
+        try:
+            A_test[layer[0]+1] = relu(Z[layer[0]])
+        except:
+            A_test.append(relu(Z[layer[0]]))
     elif layer[1] == 'tanh':
-        A[layer[0]+1] = tanh(Z[layer[0]])
+        try:
+            A_test[layer[0]+1] = tanh(Z[layer[0]])
+        except:
+            A_test.append(tanh(Z[layer[0]]))
     elif layer [1] == 'sigma':
-        A[layer[0]+1] = sigma(Z[layer[0]])
-print(A[len(A)-1],Y)
+        try:
+            A_test[layer[0]+1] = sigma(Z[layer[0]])
+        except:
+            A_test.append(sigma(Z[layer[0]]))
+print(A_test[len(A)-1],Y_test)
