@@ -13,6 +13,8 @@ def tanh(x):
 def relu(x):
     x[x<=0] = 0
     return(x)
+def lin(x):
+    return(x)
 def dsigma(x):
     return(x * (1-x))
 def dtanh(x):
@@ -21,10 +23,12 @@ def drelu(x):
     x[x<=0] = 0
     x[x>0] = 1
     return(x)
+def dlin(x):
+    return(1)
 
 alpha = 0.1
 Max_epocs = 10000
-keep_prob = 1
+keep_prob = 0.8
 
 #Create Input data
 X = np.array([0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,1,0,1,0,0,0,1,0,1,0,1,1,0,0,1,1,1,1,0,0,0,1,0,0,1,1,0,1,0,1,0,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1])
@@ -48,8 +52,8 @@ A = [np.delete(X, np.invert(trainset.reshape(16,)), axis = 1)]
 A_test = [np.delete(X, trainset.reshape(16,), axis = 1)]
 
 #Set Net parameters
-nodes = (n0,4,2,1)
-Net = [(0,'relu'),(1,'relu'),(2,'sigma')]
+nodes = (n0,16,16,16,4,2,1)
+Net = [(0,'tanh'),(1,'relu'),(2,'tanh'),(3,'relu'),(4,'tanh'),(5,'sigma')]
 
 #Create wieghts and bias
 i = 1
@@ -90,9 +94,14 @@ while L[len(L)-1] >= 0.01 or L[len(L)-1] < L[len(L)-2] * 0.999:
                 A[layer[0]+1] = sigma(Z[layer[0]])
             except:
                 A.append(sigma(Z[layer[0]]))
+        elif layer [1] == 'lin':
+            try:
+                A[layer[0]+1] = lin(Z[layer[0]])
+            except:
+                A.append(lin(Z[layer[0]]))
         else:
             print('error in function name')
-        if nodes[layer[0]+1] > 3:
+        if nodes[layer[0]+1] > 4:
             A[layer[0]+1] = keep(A[layer[0]+1])
     
     #Cost
@@ -117,6 +126,8 @@ while L[len(L)-1] >= 0.01 or L[len(L)-1] < L[len(L)-2] * 0.999:
             dZ.append(np.dot(W[layer[0]+1].T,dZ[len(dZ)-1]) * dtanh(A[layer[0]+1]))
         elif layer[1] == 'sigma':
             dZ.append(np.dot(W[layer[0]+1].T,dZ[len(dZ)-1]) * dsigma(A[layer[0]+1]))
+        elif layer[1] == 'lin':
+            dZ.append(np.dot(W[layer[0]+1].T,dZ[len(dZ)-1]) * dlin(A[layer[0]+1]))
         dW.append((1/m)*np.dot(dZ[len(dZ)-1],A[layer[0]].T))
         W[layer[0]] = W[layer[0]] - alpha * dW[len(dW)-1]
         dB.append((1/m)*np.sum(dZ[len(dZ)-1],axis = 1,keepdims = True))
